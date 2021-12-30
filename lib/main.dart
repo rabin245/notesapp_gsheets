@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:notesapp_gsheets/google_sheets_api.dart';
+import 'package:notesapp_gsheets/note_provider.dart';
 import 'homepage.dart';
+import 'package:provider/provider.dart';
+import 'note_provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GoogleSheetsApi().init();
+  await GoogleSheetsApi().init();
 
   runApp(const MyApp());
 }
@@ -20,7 +23,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
         // brightness: Brightness.dark,
       ),
-      home: HomePage(),
+      home: ChangeNotifierProvider<NoteProvider>(
+        create: (context) => NoteProvider(worksheet: GoogleSheetsApi.worksheet),
+        child: const HomePage(),
+      ),
     );
   }
 }

@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'button.dart';
-import 'google_sheets_api.dart';
 import 'loading_indicator.dart';
 import 'notes_grid.dart';
+import 'package:provider/provider.dart';
+import 'note_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,13 +19,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    context.read<NoteProvider>().init();
     _controller.addListener(() => setState(() {}));
   }
 
   void _post() async {
-    await GoogleSheetsApi.insert(_controller.text);
+    context.read<NoteProvider>().insert(_controller.text);
 
-    print(GoogleSheetsApi.currentNotes);
     setState(() {
       _controller.clear();
     });
@@ -35,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        if (GoogleSheetsApi.loading == false) {
+        if (context.read<NoteProvider>().checkLoading() == false) {
           setState(() {});
           timer.cancel();
         }
@@ -46,7 +48,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // start loading until data is fetched
-    if (GoogleSheetsApi.loading == true) {
+    if (context.read<NoteProvider>().checkLoading() == true) {
       startLoading();
     }
     return Scaffold(
@@ -62,9 +64,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          GoogleSheetsApi.loading
+          // GoogleSheetsApi.loading
+          context.read<NoteProvider>().checkLoading()
               ? const LoadingIndicator()
               : const NotesGrid(),
+          // NotesGrid(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

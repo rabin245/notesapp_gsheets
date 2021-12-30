@@ -20,58 +20,59 @@ class GoogleSheetsApi {
   // set up and connect to spreadsheet
   static const _spreadsheetId = '1FMMz1TGgjeCwXOE1IsNfIpCpepEDvM_eueXLOrLeS1M';
   static final _gsheets = GSheets(_credentials);
-  static Worksheet? _worksheet;
+  static Worksheet? worksheet;
 
   // variables to keep track of notes
-  static int numberOfNotes = 0;
-  static List<String> currentNotes = [];
-
-  static bool loading = true;
+  // static int numberOfNotes = 0;
+  // static List<String> currentNotes = [];
+  //
+  // static bool loading = true;
 
   //  initialize the spreadsheet
   Future init() async {
     final ss = await _gsheets.spreadsheet(_spreadsheetId);
-    _worksheet = ss.worksheetByTitle('Worksheet1');
+    worksheet = await ss.worksheetByTitle('Worksheet1');
+
+    print(worksheet!.title);
     // print(numberOfNotes);
     // print(currentNotes);
-    countRows();
+    // countRows();
   }
-
-  // insert a new note
-  static Future insert(String note) async {
-    if (_worksheet == null) return;
-    numberOfNotes++;
-    currentNotes.add(note);
-    await _worksheet!.values.appendRow([note]);
-  }
-
-  // count the number of notes
-  static Future countRows() async {
-    while (
-        (await _worksheet!.values.value(column: 1, row: numberOfNotes + 1)) !=
-            '') {
-      numberOfNotes++;
-    }
-    // print(numberOfNotes);
-    // print(currentNotes);
-
-    //  now we know how many notes to load, now load them
-    loadNotes();
-  }
-
-  // load existing notes from the sheet
-  static Future loadNotes() async {
-    if (_worksheet == null) return;
-
-    for (int i = 0; i < numberOfNotes; i++) {
-      final String newNote =
-          await _worksheet!.values.value(column: 1, row: i + 1);
-      if (currentNotes.length < numberOfNotes) {
-        currentNotes.add(newNote);
-      }
-    }
-    loading = false;
-    // print(numberOfNotes);
-    // print(currentNotes);
-  }
+  //
+  // // insert a new note
+  // static Future insert(String note) async {
+  //   if (worksheet == null) return;
+  //   numberOfNotes++;
+  //   currentNotes.add(note);
+  //   await worksheet!.values.appendRow([note]);
+  // }
+  //
+  // // count the number of notes
+  // static Future countRows() async {
+  //   while ((await worksheet!.values.value(column: 1, row: numberOfNotes + 1)) !=
+  //       '') {
+  //     numberOfNotes++;
+  //   }
+  //   // print(numberOfNotes);
+  //   // print(currentNotes);
+  //
+  //   //  now we know how many notes to load, now load them
+  //   loadNotes();
+  // }
+  //
+  // // load existing notes from the sheet
+  // static Future loadNotes() async {
+  //   if (worksheet == null) return;
+  //
+  //   for (int i = 0; i < numberOfNotes; i++) {
+  //     final String newNote =
+  //         await worksheet!.values.value(column: 1, row: i + 1);
+  //     if (currentNotes.length < numberOfNotes) {
+  //       currentNotes.add(newNote);
+  //     }
+  //   }
+  //   loading = false;
+  //   // print(numberOfNotes);
+  //   // print(currentNotes);
+  // }
 }

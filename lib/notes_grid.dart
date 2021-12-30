@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:notesapp_gsheets/google_sheets_api.dart';
+import 'package:notesapp_gsheets/note_provider.dart';
 import 'textbox.dart';
+import 'package:provider/provider.dart';
 
 class NotesGrid extends StatelessWidget {
   const NotesGrid({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var noteProvider = context.watch<NoteProvider>();
     return Expanded(
       child: GridView.builder(
-        itemCount: GoogleSheetsApi.currentNotes.length,
+        itemCount: noteProvider.currentNotes.length,
         gridDelegate:
             const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         itemBuilder: (context, index) {
-          return MyTextBox(text: GoogleSheetsApi.currentNotes[index]);
+          return MyTextBox(text: noteProvider.currentNotes[index]);
         },
       ),
     );
